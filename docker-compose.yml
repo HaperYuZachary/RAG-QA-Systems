@@ -1,0 +1,33 @@
+services:
+  backend:
+    build: ./backend
+    env_file:
+      - ./backend/.env
+    environment:
+      # 固定数据目录为 /app/data，确保与下面的卷挂载对齐（覆盖 .env 中可能的本地路径）
+      - DATA_DIR=./data
+    volumes:
+      # 持久化 Chroma 向量库 + SQLite 元数据 + 上传原始文件，重启不丢
+      - ./backend/data:/app/data
+    expose:
+      - "8000"
+    healthcheck:
+      # 用镜像里现成的 python 打 /api/v1/health，不需额外装 curl
+      test:
+        - CMD
+        - python
+        - -c
+        - import urllib.request; urllib.request.urlopen('http://localhost:8000/api/v1/health')
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+
+  frontend:
+    build: ./frontend
+    depends_on:
+      backend:
+        # 等后端健康检查通过再启动，避免 nginx 一上来代理到未就绪的后端而 502
+        condition: service_healthy
+    ports:
+      - "8080:80"

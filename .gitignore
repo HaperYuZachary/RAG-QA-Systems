@@ -1,0 +1,27 @@
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+.venv/
+venv/
+env/
+
+.env
+backend/data/**
+!backend/data/**/
+!backend/data/**/.gitkeep
+
+node_modules/
+dist/
+
+*.log
+
+# editor / tooling
+.vscode/
+.idea/
+.claude/
+
+# stray root-level runtime data (real data lives under backend/data, which is ignored)
+/data/

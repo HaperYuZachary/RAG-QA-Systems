@@ -1,0 +1,269 @@
+{
+  "kb_name": "毕业论文",
+  "description": "Manual retrieval evaluation set for the local graduation-project knowledge base. Each item marks evidence text that should appear in at least one gold chunk.",
+  "metric": "Recall@5",
+  "questions": [
+    {
+      "id": "douban_001",
+      "question": "豆瓣内容推荐系统后端主要解决哪些问题？",
+      "answer": "主要解决用户认证、内容热榜聚合、用户行为采集、推荐快照生成、异步爬虫任务管理、运行监控和智能问答扩展等问题。",
+      "gold_text_contains": [
+        "重点解决用户认证、内容热榜聚合、用户行为采集"
+      ]
+    },
+    {
+      "id": "douban_002",
+      "question": "这个豆瓣后端系统采用了哪些核心技术栈？",
+      "answer": "后端以 Django REST Framework 为主要开发框架，并结合 Simple JWT、Celery、Redis 和 MySQL。",
+      "gold_text_contains": [
+        "Django REST Framework为主要开发框架",
+        "Simple JWT、Celery、Redis和MySQL"
+      ]
+    },
+    {
+      "id": "douban_003",
+      "question": "豆瓣系统后端按哪些服务模块划分？",
+      "answer": "后端按照用户服务、热榜内容服务、爬虫任务服务、推荐服务、监控反馈服务和 Nexus 扩展服务划分。",
+      "gold_text_contains": [
+        "系统后端按照用户服务、热榜内容服务、爬虫任务服务、推荐服务、监控反馈服务和Nexus扩展服务进行模块划分"
+      ]
+    },
+    {
+      "id": "douban_004",
+      "question": "推荐计算的数据来源主要来自哪些表？",
+      "answer": "用户行为表和收藏表为推荐计算提供数据来源。",
+      "gold_text_contains": [
+        "用户行为表和收藏表为推荐计算提供数据来源"
+      ]
+    },
+    {
+      "id": "douban_005",
+      "question": "为什么系统要设计推荐快照机制？",
+      "answer": "推荐快照机制用于解决推荐结果不可追踪的问题，使推荐列表具有时间点和版本概念，便于解释、回看和测试复现。",
+      "gold_text_contains": [
+        "通过推荐快照机制解决推荐结果不可追踪的问题",
+        "使推荐列表具有时间点和版本概念"
+      ]
+    },
+    {
+      "id": "douban_006",
+      "question": "推荐结果为了让前端复用组件，统一包含哪些字段？",
+      "answer": "推荐结果统一包含 item_id、category_type、title、cover、score、reason 等字段。",
+      "gold_text_contains": [
+        "推荐结果统一包含item_id、category_type、title、cover、score、reason"
+      ]
+    },
+    {
+      "id": "douban_007",
+      "question": "JWT 登录后前端如何访问受保护接口？",
+      "answer": "用户登录后后端返回 access token 和 refresh token，前端后续请求携带 access token 访问受保护接口。",
+      "gold_text_contains": [
+        "用户登录后，后端返回access token和refresh token",
+        "前端在后续请求中携带access token访问受保护接口"
+      ]
+    },
+    {
+      "id": "douban_008",
+      "question": "系统如何限制用户资料、收藏和推荐刷新等接口的访问权限？",
+      "answer": "系统使用 rest_framework_simplejwt 生成令牌，并在用户资料、偏好、收藏、行为记录、推荐刷新和反馈提交等接口中使用 IsAuthenticated 权限类。",
+      "gold_text_contains": [
+        "rest_framework_simplejwt生成令牌",
+        "推荐刷新和反馈提交等接口中使用IsAuthenticated权限类"
+      ]
+    },
+    {
+      "id": "douban_009",
+      "question": "Celery 和 Redis 在内容采集或推荐计算中起什么作用？",
+      "answer": "Celery 将耗时任务交给后台 worker 处理，Redis 作为消息队列和缓存中间件，使接口层和任务层解耦。",
+      "gold_text_contains": [
+        "Celery能够把耗时任务交给后台worker处理",
+        "Redis可以作为消息队列和缓存中间件"
+      ]
+    },
+    {
+      "id": "douban_010",
+      "question": "爬虫任务执行过程如何记录状态和日志？",
+      "answer": "创建采集任务时写入 CrawlerTask，任务执行过程中通过 CrawlerLog 保存具体运行日志，任务结束后更新成功数、失败数、错误信息和结束时间。",
+      "gold_text_contains": [
+        "系统会写入CrawlerTask记录",
+        "通过CrawlerLog保存具体运行日志"
+      ]
+    },
+    {
+      "id": "douban_011",
+      "question": "RecommendationSnapshot 和 RecommendationResult 分别保存什么？",
+      "answer": "RecommendationSnapshot 记录推荐生成的标题、分类、生成时间、条目数量和是否当前版本，RecommendationResult 保存每个推荐条目的 item_id、score 和 reason。",
+      "gold_text_contains": [
+        "RecommendationSnapshot表用来记录某一次推荐生成的标题、分类、生成时间",
+        "RecommendationResult表保存每个推荐条目的item_id、score跟reason"
+      ]
+    },
+    {
+      "id": "douban_012",
+      "question": "系统为什么选择热门兜底加行为偏好的混合推荐？",
+      "answer": "该策略能够适配冷启动和个性化两类场景。",
+      "gold_text_contains": [
+        "热门兜底+行为偏好混合",
+        "适配冷启动和个性化两类场景"
+      ]
+    },
+    {
+      "id": "douban_013",
+      "question": "爬虫任务模块的触发采集功能如何执行？",
+      "answer": "触发采集会创建任务并交给 Celery，必要时同步兜底执行。",
+      "gold_text_contains": [
+        "触发采集 | 创建任务并交给Celery或同步兜底执行"
+      ]
+    },
+    {
+      "id": "douban_016",
+      "question": "论文中认为推荐算法目前的不足和改进方向是什么？",
+      "answer": "不足是规则权重较多、真实大规模数据不足，改进方向是引入向量召回、协同过滤优化和效果评估。",
+      "gold_text_contains": [
+        "规则权重较多，真实大规模数据不足",
+        "引入向量召回、协同过滤优化和效果评估"
+      ]
+    },
+    {
+      "id": "llmcf_001",
+      "question": "LLM-CF 这篇文章的核心思想是什么？",
+      "answer": "LLM-CF 试图将大语言模型的世界知识和推理能力蒸馏到协同过滤推荐框架中，增强底层推荐模型。",
+      "gold_text_contains": [
+        "大语言模型增强的协同过滤",
+        "将世界知识与推理引导的协同过滤特征有效融入底层推荐模型"
+      ]
+    },
+    {
+      "id": "llmcf_002",
+      "question": "已有 LLM 推荐增强工作被 LLM-CF 批评的主要问题是什么？",
+      "answer": "已有方法主要关注有限的用户-物品信息，忽略协同过滤信息，并且实时 LLM 处理带来效率问题。",
+      "gold_text_contains": [
+        "忽略了协同过滤（CF）信息",
+        "实时 LLM 处理而面临效率问题"
+      ]
+    },
+    {
+      "id": "llmcf_003",
+      "question": "为什么直接用推荐数据微调 LLM 会有风险？",
+      "answer": "直接沿用推荐数据微调 LLM 会导致通用能力灾难性遗忘，甚至无法生成有意义的文本。",
+      "gold_text_contains": [
+        "用推荐数据对 LLM进行微调，会导致通用能力的灾难性遗忘",
+        "甚至无法生成有意义的文本"
+      ]
+    },
+    {
+      "id": "llmcf_004",
+      "question": "LLM-CF 实验中 LoRA 是如何设置的？",
+      "answer": "LoRA 被加在 LLaMA2 的 Query 和 Value 矩阵上，并设置秩为 8。",
+      "gold_text_contains": [
+        "在 LLaMA2 的 Query 和 Value 矩阵上采用低秩适应（LoRA）",
+        "增添秩为 8 的参数"
+      ]
+    },
+    {
+      "id": "llmcf_005",
+      "question": "RecGen 和 Wise-FT(0.6) 在实验中有什么发现？",
+      "answer": "二者都在通用能力与推荐性能之间取得较好平衡，其中 RecGen 表现更优。",
+      "gold_text_contains": [
+        "RecGen 与 Wise-FT(0.6) 在通用能力与推荐性能之间实现了良好的平衡",
+        "其中 RecGen 表现更优"
+      ]
+    },
+    {
+      "id": "llmcf_006",
+      "question": "LLM-CF 为什么在线服务效率更高？",
+      "answer": "它避免了大语言模型的实时生成，只需要对历史数据集周期性更新，从而将 LLM 生成与在线推荐服务解耦。",
+      "gold_text_contains": [
+        "避免了大语言模型的实时生成",
+        "仅需对历史数据集进行周期性更新"
+      ]
+    },
+    {
+      "id": "llmcf_007",
+      "question": "LLM-CF 在线服务包含哪些关键组件？",
+      "answer": "包括上下文内思维链示例检索和上下文链式思维 ICT 模块。",
+      "gold_text_contains": [
+        "上下文内思维链示例检索",
+        "上下文链式思维（ICT）模块"
+      ]
+    },
+    {
+      "id": "llmcf_008",
+      "question": "上下文内 CoT 示例检索使用什么文本嵌入方法？",
+      "answer": "检索过程使用 BGE 嵌入作为文本编码器，并按余弦相似度寻找前 K 个相似候选。",
+      "gold_text_contains": [
+        "我们使用 BGE 嵌入",
+        "根据余弦相似度得分识别出前 K 个最相似候选键的索引"
+      ]
+    },
+    {
+      "id": "llmcf_009",
+      "question": "LLM-CF 为避免标签比例造成捷径，如何约束上下文示例？",
+      "answer": "它约束上下文示例 Ii 中正负标签比例保持相等。",
+      "gold_text_contains": [
+        "正负标签的比例保持相等",
+        "从而阻断捷径"
+      ]
+    },
+    {
+      "id": "llmcf_010",
+      "question": "LLM-CF 在线 ICT 模块为什么计算开销小？",
+      "answer": "ICT 输入是短序列，实验表明示例数量只需 K=4，令牌序列长度只有十几个左右。",
+      "gold_text_contains": [
+        "ICT 示例的数量仅需 K = 4",
+        "ICT 令牌序列长度T 仅为十几个左右"
+      ]
+    },
+    {
+      "id": "llmcf_011",
+      "question": "LLM-CF 在 CTR 预测任务中采用哪些评估指标？",
+      "answer": "使用 AUC、LogLoss 和 RelAmpr 作为点击率预测任务评估指标。",
+      "gold_text_contains": [
+        "AUC（受试者工作特征曲线下面积）",
+        "LogLoss（二元交叉熵损失）"
+      ]
+    },
+    {
+      "id": "llmcf_012",
+      "question": "LLM-CF 微调 LLaMA2 时使用了哪些训练资源和策略？",
+      "answer": "使用 8 块 Nvidia A800 GPU 进行全参数监督微调，并采用 DeepSpeed zero-2 策略。",
+      "gold_text_contains": [
+        "使用 8 块 Nvidia A800GPU 对 LLM 进行全参数监督微调",
+        "DeepSpeed zero-2 策略"
+      ]
+    },
+    {
+      "id": "music_001",
+      "question": "音乐服务代码中 Last.fm API 的基础地址是什么？",
+      "answer": "Last.fm API 基础地址是 http://ws.audioscrobbler.com/2.0/。",
+      "gold_text_contains": [
+        "LASTFM_BASE_URL = \"http://ws.audioscrobbler.com/2.0/\""
+      ]
+    },
+    {
+      "id": "music_004",
+      "question": "音乐详情缓存默认保存多久？",
+      "answer": "DETAIL_CACHE_SECONDS 等于 10 * 60，即 10 分钟。",
+      "gold_text_contains": [
+        "DETAIL_CACHE_SECONDS = 10 * 60"
+      ]
+    },
+    {
+      "id": "music_005",
+      "question": "获取 Last.fm 热门歌曲时使用哪个 API method？",
+      "answer": "使用 chart.gettoptracks。",
+      "gold_text_contains": [
+        "\"method\": \"chart.gettoptracks\""
+      ]
+    },
+    {
+      "id": "music_007",
+      "question": "音乐封面 fallback 链路按什么顺序尝试？",
+      "answer": "先查 Last.fm track info 图片，再查 iTunes track cover，再查 MusicBrainz track cover，最后回退到 LastFM fallback cover URL。",
+      "gold_text_contains": [
+        "get_lastfm_track_info_image(title, artist) or get_itunes_track_cover(title, artist) or get_musicbrainz_track_cover(title, artist)",
+        "LASTFM_FALLBACK_COVER_URL"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,160 @@
+:root {
+  color: #1f2937;
+  background: #eef2f7;
+  font-family:
+    Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+    "Microsoft YaHei", sans-serif;
+  font-synthesis: none;
+  line-height: 1.5;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-width: 320px;
+  min-height: 100vh;
+}
+
+button,
+input,
+textarea,
+select {
+  font: inherit;
+}
+
+#app {
+  min-height: 100vh;
+}
+
+.app-shell {
+  min-height: 100vh;
+}
+
+.app-sidebar {
+  background: #101827;
+  color: #e5edf6;
+  border-right: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.app-main {
+  min-width: 0;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.82), rgba(255, 255, 255, 0)),
+    #eef2f7;
+}
+
+.app-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  padding: 24px 32px 18px;
+  border-bottom: 1px solid #d9e2ec;
+  background: rgba(248, 250, 252, 0.86);
+  backdrop-filter: blur(14px);
+}
+
+.app-header h1 {
+  margin: 2px 0 0;
+  color: #111827;
+  font-size: 28px;
+  font-weight: 700;
+  letter-spacing: 0;
+}
+
+.app-kicker {
+  margin: 0;
+  color: #64748b;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0;
+}
+
+.app-subtitle {
+  margin: 4px 0 0;
+  color: #5b6778;
+  font-size: 14px;
+}
+
+.app-content {
+  padding: 28px 32px;
+}
+
+.route-placeholder {
+  display: grid;
+  min-height: calc(100vh - 152px);
+  grid-template-columns: minmax(0, 1fr) minmax(280px, 360px);
+  align-items: center;
+  gap: 40px;
+  padding: 8px 0;
+}
+
+.route-placeholder__kicker {
+  margin: 0 0 12px;
+  color: #0f766e;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0;
+}
+
+.route-placeholder h2 {
+  max-width: 660px;
+  margin: 0;
+  color: #111827;
+  font-size: 34px;
+  font-weight: 760;
+  letter-spacing: 0;
+}
+
+.route-placeholder__description {
+  max-width: 640px;
+  margin: 16px 0 0;
+  color: #526070;
+  font-size: 16px;
+}
+
+.route-placeholder__panel {
+  display: flex;
+  min-height: 260px;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid #dbe4ef;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.72);
+}
+
+@media (max-width: 900px) {
+  .app-shell {
+    display: block;
+  }
+
+  .app-sidebar {
+    width: 100% !important;
+  }
+
+  .app-header {
+    height: auto !important;
+    align-items: flex-start;
+    padding: 20px;
+  }
+
+  .app-content {
+    padding: 20px;
+  }
+
+  .route-placeholder {
+    min-height: auto;
+    grid-template-columns: 1fr;
+    gap: 24px;
+  }
+
+  .route-placeholder h2 {
+    font-size: 28px;
+  }
+}
