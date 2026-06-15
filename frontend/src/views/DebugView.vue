@@ -18,8 +18,9 @@ const { error, loading, result } = storeToRefs(debugStore)
 const kbLoadError = shallowRef('')
 
 const activeKnowledgeBaseLabel = computed(
-  () => activeKb.value?.name ?? activeKbId.value,
+  () => activeKb.value?.name ?? '未选择知识库',
 )
+const activeSearchKbId = computed(() => (activeKb.value ? activeKbId.value : ''))
 const visibleError = computed(() => kbLoadError.value || formatError(error.value))
 
 const {
@@ -29,7 +30,7 @@ const {
   query,
   topK,
 } = useDebugSearchForm({
-  activeKbId,
+  activeKbId: activeSearchKbId,
   loading,
   search(payload) {
     return debugStore.search(payload)
@@ -51,7 +52,6 @@ onMounted(async () => {
     await kbStore.fetchAll()
   } catch (loadError) {
     kbLoadError.value = formatError(loadError)
-    ElMessage.error(kbLoadError.value)
   }
 })
 
@@ -74,6 +74,10 @@ function formatError(value) {
 
   if (value.data?.detail) {
     return value.data.detail
+  }
+
+  if (value.response?.status) {
+    return `请求失败（${value.response.status}），请确认后端服务是否正常运行`
   }
 
   return value.message ?? '检索失败，请稍后重试'
@@ -138,9 +142,10 @@ function formatError(value) {
 .debug-view__result-shell {
   min-height: 260px;
   padding: 20px;
-  border: 1px solid #dbe4ef;
-  border-radius: 8px;
-  background: rgba(255, 255, 255, 0.76);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  background: var(--surface);
+  box-shadow: var(--panel-shadow);
 }
 
 .debug-view__result-shell :deep(.el-empty) {

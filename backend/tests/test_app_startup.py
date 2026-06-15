@@ -25,6 +25,7 @@ def test_api_routes_are_mounted_without_touching_heavy_services(tmp_path, monkey
         "/api/v1/upload",
         "/api/v1/docs",
         "/api/v1/chat",
+        "/api/v1/chat/conversations",
         "/api/v1/debug/search",
     } <= paths
 

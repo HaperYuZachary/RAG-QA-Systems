@@ -59,6 +59,7 @@ def test_embed_batches_texts_and_preserves_order():
     client = FakeOpenAIClient()
     embedder = Embedder(
         Settings(
+            embedding_provider="openai",
             openai_api_key="test-key",
             embedding_model="test-embedding-model",
             embedding_batch_size=20,
@@ -88,7 +89,11 @@ def test_embed_retries_failed_batches_without_sleeping():
     client = FakeOpenAIClient(failures_before_success=2)
     sleep_calls = []
     embedder = Embedder(
-        Settings(openai_api_key="test-key", embedding_max_retries=3),
+        Settings(
+            embedding_provider="openai",
+            openai_api_key="test-key",
+            embedding_max_retries=3,
+        ),
         client=client,
         sleep=sleep_calls.append,
     )
@@ -103,7 +108,11 @@ def test_embed_retries_failed_batches_without_sleeping():
 def test_embed_raises_after_retry_budget_is_exhausted():
     client = FakeOpenAIClient(failures_before_success=10)
     embedder = Embedder(
-        Settings(openai_api_key="test-key", embedding_max_retries=3),
+        Settings(
+            embedding_provider="openai",
+            openai_api_key="test-key",
+            embedding_max_retries=3,
+        ),
         client=client,
         sleep=lambda seconds: None,
     )
@@ -115,7 +124,7 @@ def test_embed_raises_after_retry_budget_is_exhausted():
 
 
 def test_embed_requires_api_key_when_default_client_is_used():
-    embedder = Embedder(Settings(openai_api_key=""))
+    embedder = Embedder(Settings(embedding_provider="openai", openai_api_key=""))
 
     with pytest.raises(EmbeddingError, match="OPENAI_API_KEY"):
         embedder.embed(["needs a real client"])

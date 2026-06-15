@@ -128,7 +128,7 @@ function handleRenderedClick(event) {
 <style scoped>
 .chat-message {
   display: flex;
-  max-width: min(760px, 88%);
+  max-width: min(780px, 88%);
   flex-direction: column;
   gap: 7px;
 }
@@ -147,22 +147,22 @@ function handleRenderedClick(event) {
   display: flex;
   align-items: center;
   gap: 8px;
-  color: #64748b;
+  color: var(--muted);
   font-size: 12px;
-  font-weight: 700;
+  font-weight: 600;
 }
 
 .chat-message__bubble {
   padding: 13px 15px;
-  border: 1px solid #dbe4ef;
-  border-radius: 8px;
-  background: #ffffff;
-  box-shadow: 0 10px 22px rgba(15, 23, 42, 0.06);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  background: var(--surface);
+  box-shadow: var(--panel-shadow);
 }
 
 .chat-message--user .chat-message__bubble {
-  border-color: #0f766e;
-  background: #0f766e;
+  border-color: #233142;
+  background: #233142;
   color: #f8fafc;
 }
 
@@ -200,9 +200,9 @@ function handleRenderedClick(event) {
 }
 
 .chat-message__content--markdown :deep(code) {
-  border-radius: 6px;
-  background: #eef2f7;
-  color: #0f172a;
+  border-radius: var(--radius-sm);
+  background: var(--surface-subtle);
+  color: var(--text);
   font-family: ui-monospace, "SFMono-Regular", Consolas, "Liberation Mono", monospace;
   font-size: 0.92em;
 }
@@ -210,8 +210,8 @@ function handleRenderedClick(event) {
 .chat-message__content--markdown :deep(pre) {
   overflow-x: auto;
   padding: 12px;
-  border-radius: 8px;
-  background: #0f172a;
+  border-radius: var(--radius-md);
+  background: #151b24;
   color: #e5edf6;
 }
 
@@ -228,21 +228,21 @@ function handleRenderedClick(event) {
   justify-content: center;
   margin: 0 2px;
   padding: 0 6px;
-  border: 1px solid #99f6e4;
+  border: 1px solid var(--primary-border);
   border-radius: 999px;
-  background: #ccfbf1;
-  color: #0f766e;
+  background: var(--primary-soft);
+  color: var(--primary-strong);
   cursor: pointer;
   font-size: 12px;
-  font-weight: 800;
+  font-weight: 700;
 }
 
 .chat-message__content--markdown :deep(.citation-marker:hover) {
-  background: #99f6e4;
+  background: #d6ece8;
 }
 
 .chat-message__typing {
-  color: #64748b;
+  color: var(--muted);
   font-style: italic;
 }
 
@@ -253,7 +253,7 @@ function handleRenderedClick(event) {
 
 .chat-message__sources h4 {
   margin: 0 0 8px;
-  color: #64748b;
+  color: var(--muted);
   font-size: 12px;
   letter-spacing: 0;
 }
@@ -269,17 +269,17 @@ function handleRenderedClick(event) {
 .chat-message__sources button {
   width: 100%;
   padding: 10px 12px;
-  border: 1px solid #dbe4ef;
-  border-radius: 8px;
-  background: rgba(255, 255, 255, 0.78);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  background: var(--surface-muted);
   color: inherit;
   cursor: pointer;
   text-align: left;
 }
 
 .chat-message__sources button:hover {
-  border-color: #99f6e4;
-  background: #f0fdfa;
+  border-color: var(--primary-border);
+  background: #f4fbf9;
 }
 
 .chat-message__sources strong,
@@ -289,22 +289,22 @@ function handleRenderedClick(event) {
 }
 
 .chat-message__sources strong {
-  color: #0f172a;
+  color: var(--text);
   font-size: 13px;
 }
 
 .chat-message__sources span {
   margin-top: 2px;
-  color: #0f766e;
+  color: var(--primary);
   font-size: 12px;
-  font-weight: 700;
+  font-weight: 600;
 }
 
 .chat-message__sources small {
   display: -webkit-box;
   margin-top: 6px;
   overflow: hidden;
-  color: #64748b;
+  color: var(--muted);
   font-size: 12px;
   -webkit-box-orient: vertical;
   -webkit-line-clamp: 2;

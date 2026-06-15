@@ -80,15 +80,15 @@ function submit() {
 <style scoped>
 .chat-composer {
   padding: 16px;
-  border: 1px solid #dbe4ef;
-  border-radius: 8px;
-  background: rgba(255, 255, 255, 0.88);
-  box-shadow: 0 -10px 26px rgba(15, 23, 42, 0.05);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  background: var(--surface);
+  box-shadow: var(--panel-shadow);
 }
 
 .chat-composer__input :deep(.el-textarea__inner) {
-  border-radius: 8px;
-  color: #111827;
+  border-radius: var(--radius-md);
+  color: var(--text);
   line-height: 1.6;
 }
 
@@ -101,9 +101,9 @@ function submit() {
 }
 
 .chat-composer__footer span {
-  color: #64748b;
+  color: var(--muted);
   font-size: 13px;
-  font-weight: 700;
+  font-weight: 600;
 }
 
 @media (max-width: 700px) {

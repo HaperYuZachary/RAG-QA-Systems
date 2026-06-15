@@ -92,27 +92,26 @@ function formatDate(value) {
   min-height: 220px;
   flex-direction: column;
   justify-content: space-between;
-  gap: 22px;
+  gap: 20px;
   padding: 20px;
-  border: 1px solid #dbe4ef;
-  border-radius: 8px;
-  background: rgba(255, 255, 255, 0.84);
-  box-shadow: 0 10px 24px rgba(15, 23, 42, 0.06);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  background: var(--surface);
+  box-shadow: var(--panel-shadow);
   transition:
     border-color 0.18s ease,
-    box-shadow 0.18s ease,
-    transform 0.18s ease;
+    background-color 0.18s ease;
 }
 
 .kb-card:hover {
-  border-color: #9cc8c2;
-  box-shadow: 0 14px 28px rgba(15, 23, 42, 0.09);
-  transform: translateY(-1px);
+  border-color: var(--border-strong);
+  background: #fbfcfd;
 }
 
 .kb-card--active {
-  border-color: #14b8a6;
-  box-shadow: 0 16px 30px rgba(20, 184, 166, 0.13);
+  border-color: var(--primary-border);
+  background: var(--surface);
+  box-shadow: inset 3px 0 0 var(--primary);
 }
 
 .kb-card__header {
@@ -124,9 +123,9 @@ function formatDate(value) {
 
 .kb-card h3 {
   margin: 0;
-  color: #111827;
+  color: var(--text);
   font-size: 18px;
-  font-weight: 760;
+  font-weight: 700;
   letter-spacing: 0;
   overflow-wrap: anywhere;
 }
@@ -136,7 +135,7 @@ function formatDate(value) {
   min-height: 44px;
   margin: 8px 0 0;
   overflow: hidden;
-  color: #64748b;
+  color: var(--muted);
   font-size: 14px;
   -webkit-box-orient: vertical;
   -webkit-line-clamp: 2;
@@ -151,8 +150,9 @@ function formatDate(value) {
 
 .kb-card__meta div {
   padding: 12px;
-  border-radius: 8px;
-  background: #f4f7fb;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  background: var(--surface-muted);
 }
 
 .kb-card__meta dt,
@@ -161,16 +161,16 @@ function formatDate(value) {
 }
 
 .kb-card__meta dt {
-  color: #64748b;
+  color: var(--muted);
   font-size: 12px;
-  font-weight: 700;
+  font-weight: 600;
 }
 
 .kb-card__meta dd {
   margin-top: 4px;
-  color: #111827;
+  color: var(--text);
   font-size: 15px;
-  font-weight: 760;
+  font-weight: 700;
 }
 
 .kb-card__actions {

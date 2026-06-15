@@ -4,23 +4,31 @@ import { storeToRefs } from 'pinia'
 import { ElMessage } from 'element-plus'
 import { Refresh, RefreshRight } from '@element-plus/icons-vue'
 import ChatComposer from '../components/chat/ChatComposer.vue'
+import ConversationList from '../components/chat/ConversationList.vue'
 import ChatMessageList from '../components/chat/ChatMessageList.vue'
 import { useChatStore } from '../stores/chat.js'
 import { useKbStore } from '../stores/kb.js'
+import { submitQuestionAndRefreshConversations } from './chatViewActions.js'
 
 const kbStore = useKbStore()
 const chatStore = useChatStore()
 
 const { activeKb, activeKbId, items: knowledgeBases } = storeToRefs(kbStore)
-const { error, messages, streaming } = storeToRefs(chatStore)
+const {
+  conversationId,
+  conversations,
+  error,
+  messages,
+  streaming,
+} = storeToRefs(chatStore)
 
 const draft = shallowRef('')
 const kbLoadError = shallowRef('')
 const messagesScroller = shallowRef(null)
 
-const hasActiveKnowledgeBase = computed(() => Boolean(activeKbId.value))
+const hasActiveKnowledgeBase = computed(() => Boolean(activeKb.value))
 const activeKnowledgeBaseLabel = computed(
-  () => activeKb.value?.name ?? activeKbId.value,
+  () => activeKb.value?.name ?? '未选择知识库',
 )
 const composerPlaceholder = computed(() =>
   hasActiveKnowledgeBase.value
@@ -79,6 +87,18 @@ watch(scrollSignature, () => {
   scrollToBottom()
 })
 
+watch(
+  activeKbId,
+  async () => {
+    try {
+      await chatStore.loadConversations(activeKbId.value)
+    } catch (loadError) {
+      ElMessage.error(formatError(loadError))
+    }
+  },
+  { immediate: true },
+)
+
 async function handleSubmit(question) {
   if (!hasActiveKnowledgeBase.value) {
     ElMessage.warning('请先在知识库页选择或创建一个知识库')
@@ -94,7 +114,8 @@ async function handleSubmit(question) {
   draft.value = ''
 
   try {
-    await chatStore.ask({
+    await submitQuestionAndRefreshConversations({
+      chatStore,
       kbId: activeKbId.value,
       question: nextQuestion,
     })
@@ -118,12 +139,32 @@ async function handleRetry() {
   }
 
   try {
-    await chatStore.ask({
+    await submitQuestionAndRefreshConversations({
+      chatStore,
       kbId: activeKbId.value,
       question: lastUserQuestion.value,
     })
   } catch (retryError) {
     ElMessage.error(formatError(retryError))
+  }
+}
+
+async function handleSelectConversation(conversationId) {
+  try {
+    await chatStore.loadConversation(conversationId)
+    draft.value = ''
+    scrollToBottom()
+  } catch (loadError) {
+    ElMessage.error(formatError(loadError))
+  }
+}
+
+async function handleDeleteConversation(conversationId) {
+  try {
+    await chatStore.removeConversation(conversationId)
+    scrollToBottom()
+  } catch (deleteError) {
+    ElMessage.error(formatError(deleteError))
   }
 }
 
@@ -158,6 +199,10 @@ function formatError(value) {
     return value.data.detail
   }
 
+  if (value.response?.status) {
+    return `请求失败（${value.response.status}），请确认后端服务是否正常运行`
+  }
+
   return value.message ?? '问答请求失败，请稍后重试'
 }
 </script>
@@ -184,47 +229,58 @@ function formatError(value) {
       </div>
     </div>
 
-    <el-alert
-      v-if="!hasActiveKnowledgeBase"
-      title="请先在知识库页选择或创建一个知识库"
-      type="warning"
-      show-icon
-      :closable="false"
-    />
+    <div class="chat-view__workspace">
+      <ConversationList
+        :conversations="conversations"
+        :active-id="conversationId"
+        @select="handleSelectConversation"
+        @delete="handleDeleteConversation"
+      />
 
-    <el-alert
-      v-if="visibleError"
-      :title="visibleError"
-      type="error"
-      show-icon
-      :closable="false"
-    />
+      <div class="chat-view__main">
+        <el-alert
+          v-if="!hasActiveKnowledgeBase"
+          title="请先在知识库页选择或创建一个知识库"
+          type="warning"
+          show-icon
+          :closable="false"
+        />
 
-    <div ref="messagesScroller" class="chat-view__messages">
-      <ChatMessageList :messages="messages" :streaming="streaming" />
+        <el-alert
+          v-if="visibleError"
+          :title="visibleError"
+          type="error"
+          show-icon
+          :closable="false"
+        />
+
+        <div ref="messagesScroller" class="chat-view__messages">
+          <ChatMessageList :messages="messages" :streaming="streaming" />
+        </div>
+
+        <section v-if="lastFailed" class="chat-view__retry">
+          <span>上一轮回答失败，可以重新发送同一个问题。</span>
+          <el-button
+            :icon="RefreshRight"
+            :disabled="!canRetry"
+            plain
+            type="primary"
+            @click="handleRetry"
+          >
+            重试
+          </el-button>
+        </section>
+
+        <ChatComposer
+          v-model="draft"
+          :disabled="!hasActiveKnowledgeBase"
+          :placeholder="composerPlaceholder"
+          :streaming="streaming"
+          @submit="handleSubmit"
+          @stop="handleStop"
+        />
+      </div>
     </div>
-
-    <section v-if="lastFailed" class="chat-view__retry">
-      <span>上一轮回答失败，可以重新发送同一个问题。</span>
-      <el-button
-        :icon="RefreshRight"
-        :disabled="!canRetry"
-        plain
-        type="primary"
-        @click="handleRetry"
-      >
-        重试
-      </el-button>
-    </section>
-
-    <ChatComposer
-      v-model="draft"
-      :disabled="!hasActiveKnowledgeBase"
-      :placeholder="composerPlaceholder"
-      :streaming="streaming"
-      @submit="handleSubmit"
-      @stop="handleStop"
-    />
   </section>
 </template>
 
@@ -237,6 +293,22 @@ function formatError(value) {
   gap: 18px;
 }
 
+.chat-view__workspace {
+  display: grid;
+  flex: 1;
+  min-height: 0;
+  grid-template-columns: minmax(220px, 272px) minmax(0, 1fr);
+  gap: 16px;
+}
+
+.chat-view__main {
+  display: flex;
+  min-width: 0;
+  min-height: 0;
+  flex-direction: column;
+  gap: 18px;
+}
+
 .chat-view__header {
   display: flex;
   align-items: center;
@@ -246,15 +318,16 @@ function formatError(value) {
 
 .chat-view__kicker {
   margin: 0 0 6px;
-  color: #0f766e;
+  color: var(--primary);
   font-size: 13px;
   font-weight: 700;
 }
 
 .chat-view h2 {
   margin: 0;
-  color: #111827;
+  color: var(--text);
   font-size: 24px;
+  font-weight: 700;
   letter-spacing: 0;
 }
 
@@ -271,9 +344,10 @@ function formatError(value) {
   min-height: 0;
   overflow-y: auto;
   padding: 20px;
-  border: 1px solid #dbe4ef;
-  border-radius: 8px;
-  background: rgba(255, 255, 255, 0.68);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  background: var(--surface);
+  box-shadow: var(--panel-shadow);
 }
 
 .chat-view__retry {
@@ -282,21 +356,25 @@ function formatError(value) {
   justify-content: space-between;
   gap: 12px;
   padding: 12px 14px;
-  border: 1px solid #bfdbfe;
-  border-radius: 8px;
-  background: #eff6ff;
+  border: 1px solid #bfd7ff;
+  border-radius: var(--radius-md);
+  background: #f3f7ff;
 }
 
 .chat-view__retry span {
-  color: #1e3a8a;
+  color: #22437a;
   font-size: 13px;
-  font-weight: 700;
+  font-weight: 600;
 }
 
 @media (max-width: 900px) {
   .chat-view {
     height: auto;
     min-height: calc(100vh - 120px);
+  }
+
+  .chat-view__workspace {
+    grid-template-columns: minmax(200px, 240px) minmax(0, 1fr);
   }
 
   .chat-view__messages {
@@ -310,6 +388,10 @@ function formatError(value) {
   .chat-view__retry {
     align-items: flex-start;
     flex-direction: column;
+  }
+
+  .chat-view__workspace {
+    grid-template-columns: 1fr;
   }
 }
 </style>

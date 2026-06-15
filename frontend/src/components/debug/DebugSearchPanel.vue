@@ -97,9 +97,10 @@ const queryPlaceholder = computed(() =>
   flex-direction: column;
   gap: 18px;
   padding: 20px;
-  border: 1px solid #dbe4ef;
-  border-radius: 8px;
-  background: rgba(255, 255, 255, 0.84);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  background: var(--surface);
+  box-shadow: var(--panel-shadow);
 }
 
 .debug-search__header {
@@ -111,15 +112,16 @@ const queryPlaceholder = computed(() =>
 
 .debug-search__kicker {
   margin: 0 0 6px;
-  color: #0f766e;
+  color: var(--primary);
   font-size: 13px;
   font-weight: 700;
 }
 
 .debug-search h2 {
   margin: 0;
-  color: #111827;
+  color: var(--text);
   font-size: 24px;
+  font-weight: 700;
   letter-spacing: 0;
 }
 
@@ -138,9 +140,9 @@ const queryPlaceholder = computed(() =>
   display: flex;
   flex-direction: column;
   gap: 6px;
-  color: #475569;
+  color: var(--text-soft);
   font-size: 13px;
-  font-weight: 700;
+  font-weight: 600;
 }
 
 .debug-search__topk :deep(.el-input-number) {

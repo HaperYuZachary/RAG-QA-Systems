@@ -59,21 +59,22 @@ const stats = computed(() => [
   flex-direction: column;
   justify-content: space-between;
   padding: 16px;
-  border: 1px solid #dbe4ef;
-  border-radius: 8px;
-  background: rgba(255, 255, 255, 0.84);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  background: var(--surface);
+  box-shadow: var(--panel-shadow);
 }
 
 .debug-timing__card span {
-  color: #64748b;
+  color: var(--muted);
   font-size: 12px;
-  font-weight: 800;
+  font-weight: 700;
   letter-spacing: 0;
   text-transform: uppercase;
 }
 
 .debug-timing__card strong {
-  color: #111827;
+  color: var(--text);
   font-size: 22px;
   letter-spacing: 0;
   line-height: 1.1;

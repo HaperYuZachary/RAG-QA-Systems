@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict'
 import test from 'node:test'
-import { parseSseFrame, streamChat } from './index.js'
+import { conversationApi, http, parseSseFrame, streamChat } from './index.js'
 
 function createTextStream(chunks) {
   const encoder = new TextEncoder()
@@ -180,6 +180,76 @@ test('streamChat rejects when the SSE stream emits an error event', async () => 
     {
       message: 'generator unavailable',
       type: 'RuntimeError',
+    },
+  ])
+})
+
+test('conversationApi calls chat conversation endpoints and unwraps responses', async (t) => {
+  const originalAdapter = http.defaults.adapter
+  const requests = []
+  t.after(() => {
+    http.defaults.adapter = originalAdapter
+  })
+
+  http.defaults.adapter = async (config) => {
+    requests.push({
+      method: config.method,
+      url: config.url,
+      params: config.params,
+    })
+
+    if (config.url === '/chat/conversations') {
+      return {
+        data: [{ id: 'conv_1', title: '年假', message_count: 2 }],
+        status: 200,
+        statusText: 'OK',
+        headers: {},
+        config,
+      }
+    }
+
+    if (config.url === '/chat/conversations/conv%2F1/messages') {
+      return {
+        data: [{ id: 'msg_1', role: 'user', content: '年假几天？' }],
+        status: 200,
+        statusText: 'OK',
+        headers: {},
+        config,
+      }
+    }
+
+    return {
+      data: null,
+      status: 204,
+      statusText: 'No Content',
+      headers: {},
+      config,
+    }
+  }
+
+  assert.deepEqual(await conversationApi.list('kb_1'), [
+    { id: 'conv_1', title: '年假', message_count: 2 },
+  ])
+  assert.deepEqual(await conversationApi.getMessages('conv/1'), [
+    { id: 'msg_1', role: 'user', content: '年假几天？' },
+  ])
+  assert.equal(await conversationApi.remove('conv/1'), null)
+
+  assert.deepEqual(requests, [
+    {
+      method: 'get',
+      url: '/chat/conversations',
+      params: { kb_id: 'kb_1' },
+    },
+    {
+      method: 'get',
+      url: '/chat/conversations/conv%2F1/messages',
+      params: undefined,
+    },
+    {
+      method: 'delete',
+      url: '/chat/conversations/conv%2F1',
+      params: undefined,
     },
   ])
 })

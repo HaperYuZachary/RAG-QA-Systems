@@ -126,10 +126,10 @@ function fileTypeLabel(fileType) {
 <style scoped>
 .document-list {
   padding: 20px;
-  border: 1px solid #dbe4ef;
-  border-radius: 8px;
-  background: rgba(255, 255, 255, 0.84);
-  box-shadow: 0 10px 24px rgba(15, 23, 42, 0.06);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  background: var(--surface);
+  box-shadow: var(--panel-shadow);
 }
 
 .document-list__header {
@@ -142,23 +142,23 @@ function fileTypeLabel(fileType) {
 
 .document-list__kicker {
   margin: 0 0 6px;
-  color: #0f766e;
+  color: var(--primary);
   font-size: 13px;
   font-weight: 700;
 }
 
 .document-list h3 {
   margin: 0;
-  color: #111827;
+  color: var(--text);
   font-size: 18px;
-  font-weight: 760;
+  font-weight: 700;
   letter-spacing: 0;
 }
 
 .document-list__header span {
-  color: #64748b;
+  color: var(--muted);
   font-size: 13px;
-  font-weight: 700;
+  font-weight: 600;
 }
 
 .document-list__table {

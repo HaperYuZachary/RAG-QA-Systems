@@ -52,13 +52,13 @@ const hasMessages = computed(() => props.messages.length > 0)
   place-items: center;
   align-content: center;
   gap: 10px;
-  color: #64748b;
+  color: var(--muted);
   text-align: center;
 }
 
 .chat-message-list__empty .el-icon {
-  color: #0f766e;
-  font-size: 42px;
+  color: var(--primary);
+  font-size: 38px;
 }
 
 .chat-message-list__empty h3,
@@ -67,7 +67,7 @@ const hasMessages = computed(() => props.messages.length > 0)
 }
 
 .chat-message-list__empty h3 {
-  color: #111827;
+  color: var(--text);
   font-size: 20px;
   letter-spacing: 0;
 }
@@ -88,9 +88,9 @@ const hasMessages = computed(() => props.messages.length > 0)
 
 .chat-message-list__streaming {
   margin-top: 16px;
-  color: #0f766e;
+  color: var(--primary);
   font-size: 13px;
-  font-weight: 700;
+  font-weight: 600;
 }
 
 </style>

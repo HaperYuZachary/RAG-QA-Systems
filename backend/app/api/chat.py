@@ -1,10 +1,19 @@
 import json
 from collections.abc import Iterable
 
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, HTTPException, status
 from fastapi.responses import StreamingResponse
 
-from app.api.schemas import ChatRequest
+from app.api.schemas import (
+    ChatRequest,
+    ConversationMessageResponse,
+    ConversationSummaryResponse,
+)
+from app.config import settings
+from app.services.conversation_service import (
+    ConversationNotFoundError,
+    ConversationService,
+)
 from app.services.chat_service import ChatService, ChatStreamEvent
 
 
@@ -23,6 +32,10 @@ def get_chat_service() -> ChatService:
     return _chat_service
 
 
+def get_conversation_service() -> ConversationService:
+    return ConversationService(settings)
+
+
 @router.post("/chat")
 def chat(
     request: ChatRequest,
@@ -38,6 +51,39 @@ def chat(
         ),
         media_type="text/event-stream",
     )
+
+
+@router.get("/chat/conversations", response_model=list[ConversationSummaryResponse])
+def list_conversations(
+    kb_id: str,
+    conversation_service: ConversationService = Depends(get_conversation_service),
+):
+    return conversation_service.list_conversations(kb_id)
+
+
+@router.get(
+    "/chat/conversations/{conversation_id}/messages",
+    response_model=list[ConversationMessageResponse],
+)
+def get_conversation_messages(
+    conversation_id: str,
+    conversation_service: ConversationService = Depends(get_conversation_service),
+):
+    return conversation_service.get_messages(conversation_id)
+
+
+@router.delete(
+    "/chat/conversations/{conversation_id}",
+    status_code=status.HTTP_204_NO_CONTENT,
+)
+def delete_conversation(
+    conversation_id: str,
+    conversation_service: ConversationService = Depends(get_conversation_service),
+):
+    try:
+        conversation_service.delete_conversation(conversation_id)
+    except ConversationNotFoundError:
+        raise HTTPException(status_code=404, detail="Conversation not found")
 
 
 def _sse_stream(events: Iterable[ChatStreamEvent]):

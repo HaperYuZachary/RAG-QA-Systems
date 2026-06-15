@@ -107,6 +107,28 @@ export const debugApi = {
   },
 }
 
+export const conversationApi = {
+  list(kbId) {
+    return http
+      .get('/chat/conversations', {
+        params: withKbParam(kbId),
+      })
+      .then(unwrap)
+  },
+
+  getMessages(conversationId) {
+    return http
+      .get(`/chat/conversations/${encodeURIComponent(conversationId)}/messages`)
+      .then(unwrap)
+  },
+
+  remove(conversationId) {
+    return http
+      .delete(`/chat/conversations/${encodeURIComponent(conversationId)}`)
+      .then(unwrap)
+  },
+}
+
 export function parseSseFrame(frameText) {
   const event = {
     event: 'message',

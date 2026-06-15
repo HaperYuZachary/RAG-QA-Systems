@@ -162,16 +162,16 @@ function formatTextPreview(value) {
 
 .debug-results__kicker {
   margin: 0 0 6px;
-  color: #0f766e;
+  color: var(--primary);
   font-size: 12px;
-  font-weight: 800;
+  font-weight: 700;
   letter-spacing: 0;
   text-transform: uppercase;
 }
 
 .debug-results h3 {
   margin: 0;
-  color: #111827;
+  color: var(--text);
   font-size: 18px;
   letter-spacing: 0;
 }
@@ -181,9 +181,9 @@ function formatTextPreview(value) {
   min-width: 0;
   align-items: center;
   gap: 10px;
-  color: #64748b;
+  color: var(--muted);
   font-size: 13px;
-  font-weight: 700;
+  font-weight: 600;
 }
 
 .debug-results__summary span {
@@ -196,9 +196,9 @@ function formatTextPreview(value) {
 .debug-results__summary strong {
   flex: 0 0 auto;
   padding: 4px 8px;
-  border-radius: 6px;
-  background: #ecfdf5;
-  color: #047857;
+  border-radius: var(--radius-sm);
+  background: var(--primary-soft);
+  color: var(--primary-strong);
 }
 
 .debug-results__table {
@@ -215,26 +215,26 @@ function formatTextPreview(value) {
 
 .debug-results__expanded {
   padding: 14px 18px;
-  border-left: 3px solid #14b8a6;
-  background: #f8fafc;
+  border-left: 3px solid var(--primary);
+  background: var(--surface-muted);
 }
 
 .debug-results__expanded span {
-  color: #0f766e;
+  color: var(--primary);
   font-size: 12px;
-  font-weight: 800;
+  font-weight: 700;
 }
 
 .debug-results__expanded p {
   margin: 8px 0 0;
-  color: #1f2937;
+  color: var(--text);
   line-height: 1.7;
   white-space: pre-wrap;
 }
 
 .debug-results__rank {
-  color: #0f766e;
-  font-weight: 800;
+  color: var(--primary);
+  font-weight: 700;
 }
 
 .debug-results__chunk,
@@ -249,9 +249,9 @@ function formatTextPreview(value) {
   max-width: 100%;
   overflow: hidden;
   padding: 2px 6px;
-  border-radius: 6px;
-  background: #eef2f7;
-  color: #334155;
+  border-radius: var(--radius-sm);
+  background: var(--surface-subtle);
+  color: var(--text-soft);
   font-size: 12px;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -261,7 +261,7 @@ function formatTextPreview(value) {
   display: -webkit-box;
   overflow: hidden;
   margin: 0;
-  color: #1f2937;
+  color: var(--text);
   line-height: 1.55;
   -webkit-box-orient: vertical;
   -webkit-line-clamp: 2;
@@ -275,31 +275,31 @@ function formatTextPreview(value) {
 }
 
 .debug-results__metric span {
-  color: #64748b;
+  color: var(--muted);
   font-size: 12px;
-  font-weight: 700;
+  font-weight: 600;
 }
 
 .debug-results__metric strong {
-  color: #111827;
+  color: var(--text);
   font-size: 13px;
 }
 
 .debug-results__score {
   display: inline-block;
-  color: #111827;
+  color: var(--text);
   font-size: 13px;
-  font-weight: 800;
+  font-weight: 700;
 }
 
 .debug-results__score--rrf {
-  color: #0f766e;
+  color: var(--primary);
 }
 
 .debug-results__document {
   display: block;
   overflow: hidden;
-  color: #334155;
+  color: var(--text-soft);
   text-overflow: ellipsis;
   white-space: nowrap;
 }

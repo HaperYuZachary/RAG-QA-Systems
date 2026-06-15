@@ -78,8 +78,10 @@ def test_docker_compose_wires_backend_frontend_and_persistent_data():
     assert backend["env_file"] == ["./backend/.env"]
     assert backend["volumes"] == ["./backend/data:/app/data"]
     assert backend["expose"] == ["8000"]
+    assert backend["environment"] == ["DATA_DIR=./data"]
+    assert "healthcheck" in backend
 
     frontend = services["frontend"]
     assert frontend["build"] == "./frontend"
-    assert frontend["depends_on"] == ["backend"]
+    assert frontend["depends_on"] == {"backend": {"condition": "service_healthy"}}
     assert frontend["ports"] == ["8080:80"]

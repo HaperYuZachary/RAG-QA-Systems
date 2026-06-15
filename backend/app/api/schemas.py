@@ -22,6 +22,22 @@ class ChatRequest(BaseModel):
         return stripped
 
 
+class ConversationSummaryResponse(BaseModel):
+    id: str
+    title: str
+    created_at: str
+    updated_at: str
+    message_count: int
+
+
+class ConversationMessageResponse(BaseModel):
+    id: str
+    role: str
+    content: str
+    sources: dict | None = None
+    created_at: str
+
+
 class DebugSearchRequest(BaseModel):
     kb_id: str
     query: str

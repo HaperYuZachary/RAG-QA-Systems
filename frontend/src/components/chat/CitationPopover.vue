@@ -38,10 +38,10 @@ const emit = defineEmits(['close'])
   width: min(460px, 100%);
   margin-top: 10px;
   padding: 12px 14px;
-  border: 1px solid #a7f3d0;
-  border-radius: 8px;
-  background: #f0fdfa;
-  box-shadow: 0 12px 24px rgba(15, 118, 110, 0.12);
+  border: 1px solid var(--primary-border);
+  border-radius: var(--radius-md);
+  background: var(--primary-soft);
+  box-shadow: var(--panel-shadow);
 }
 
 .citation-popover__header {
@@ -58,22 +58,22 @@ const emit = defineEmits(['close'])
 }
 
 .citation-popover strong {
-  color: #0f172a;
+  color: var(--text);
   font-size: 14px;
 }
 
 .citation-popover span {
   margin-top: 2px;
-  color: #0f766e;
+  color: var(--primary);
   font-size: 12px;
-  font-weight: 700;
+  font-weight: 600;
 }
 
 .citation-popover p {
   display: -webkit-box;
   margin: 8px 0 0;
   overflow: hidden;
-  color: #334155;
+  color: var(--text-soft);
   font-size: 13px;
   -webkit-box-orient: vertical;
   -webkit-line-clamp: 5;

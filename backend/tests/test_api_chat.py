@@ -4,7 +4,8 @@ from fastapi import FastAPI
 from fastapi.testclient import TestClient
 
 import app.api.chat as chat_module
-from app.api.chat import get_chat_service, router
+from app.api.chat import get_chat_service, get_conversation_service, router
+from app.services.conversation_service import ConversationNotFoundError
 from app.services.chat_service import ChatStreamEvent
 
 
@@ -31,10 +32,58 @@ class FakeChatService:
         )
 
 
-def create_test_client(fake_service):
+class FakeConversationService:
+    def __init__(self):
+        self.calls = []
+        self.conversations = [
+            {
+                "id": "conv_1",
+                "title": "年假",
+                "created_at": "2026-06-10T00:00:00",
+                "updated_at": "2026-06-10T00:02:00",
+                "message_count": 2,
+            }
+        ]
+        self.messages = [
+            {
+                "id": "msg_1",
+                "role": "user",
+                "content": "年假几天？",
+                "sources": None,
+                "created_at": "2026-06-10T00:01:00",
+            },
+            {
+                "id": "msg_2",
+                "role": "assistant",
+                "content": "满一年五天[1]。",
+                "sources": {"sources": [{"id": "chunk_1"}], "invalid_references": []},
+                "created_at": "2026-06-10T00:02:00",
+            },
+        ]
+        self.missing_ids = set()
+
+    def list_conversations(self, kb_id):
+        self.calls.append(("list_conversations", kb_id))
+        return self.conversations
+
+    def get_messages(self, conversation_id):
+        self.calls.append(("get_messages", conversation_id))
+        return self.messages
+
+    def delete_conversation(self, conversation_id):
+        self.calls.append(("delete_conversation", conversation_id))
+        if conversation_id in self.missing_ids:
+            raise ConversationNotFoundError(conversation_id)
+
+
+def create_test_client(fake_service, fake_conversation_service=None):
     app = FastAPI()
     app.include_router(router)
     app.dependency_overrides[get_chat_service] = lambda: fake_service
+    if fake_conversation_service is not None:
+        app.dependency_overrides[get_conversation_service] = (
+            lambda: fake_conversation_service
+        )
     return TestClient(app)
 
 
@@ -134,3 +183,47 @@ def test_get_chat_service_builds_one_shared_instance(monkeypatch):
 
     assert first is second
     assert len(created) == 1
+
+
+def test_list_conversations_endpoint_returns_service_results():
+    fake_conversation_service = FakeConversationService()
+    client = create_test_client(FakeChatService(), fake_conversation_service)
+
+    response = client.get("/chat/conversations", params={"kb_id": "kb_1"})
+
+    assert response.status_code == 200
+    assert fake_conversation_service.calls == [("list_conversations", "kb_1")]
+    assert response.json() == fake_conversation_service.conversations
+
+
+def test_get_conversation_messages_endpoint_returns_service_results():
+    fake_conversation_service = FakeConversationService()
+    client = create_test_client(FakeChatService(), fake_conversation_service)
+
+    response = client.get("/chat/conversations/conv_1/messages")
+
+    assert response.status_code == 200
+    assert fake_conversation_service.calls == [("get_messages", "conv_1")]
+    assert response.json() == fake_conversation_service.messages
+
+
+def test_delete_conversation_endpoint_deletes_with_no_body():
+    fake_conversation_service = FakeConversationService()
+    client = create_test_client(FakeChatService(), fake_conversation_service)
+
+    response = client.delete("/chat/conversations/conv_1")
+
+    assert response.status_code == 204
+    assert response.content == b""
+    assert fake_conversation_service.calls == [("delete_conversation", "conv_1")]
+
+
+def test_delete_conversation_endpoint_maps_missing_conversation_to_404():
+    fake_conversation_service = FakeConversationService()
+    fake_conversation_service.missing_ids.add("conv_missing")
+    client = create_test_client(FakeChatService(), fake_conversation_service)
+
+    response = client.delete("/chat/conversations/conv_missing")
+
+    assert response.status_code == 404
+    assert response.json() == {"detail": "Conversation not found"}

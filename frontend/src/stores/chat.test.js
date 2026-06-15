@@ -31,11 +31,12 @@ function createControlledStream() {
   return stream
 }
 
-function createStore(streamImpl) {
+function createStore(streamImpl, conversationApi) {
   setActivePinia(createPinia())
   const useStore = createChatStoreDefinition({
     id: `chat-test-${Math.random()}`,
     streamImpl,
+    conversationApi,
   })
 
   return useStore()
@@ -222,4 +223,126 @@ test('reset aborts in-flight generation and clears the conversation', async () =
 
   stream.reject(new DOMException('Aborted', 'AbortError'))
   await askPromise
+})
+
+test('loadConversations stores conversation summaries for the active knowledge base', async () => {
+  const conversationApi = {
+    calls: [],
+    async list(kbId) {
+      conversationApi.calls.push(['list', kbId])
+      return [
+        {
+          id: 'conv_2',
+          title: '最近会话',
+          created_at: '2026-06-11T00:00:00',
+          updated_at: '2026-06-11T00:10:00',
+          message_count: 3,
+        },
+      ]
+    },
+  }
+  const store = createStore(async () => {}, conversationApi)
+
+  const conversations = await store.loadConversations('kb_1')
+
+  assert.deepEqual(conversationApi.calls, [['list', 'kb_1']])
+  assert.deepEqual(conversations, [
+    {
+      id: 'conv_2',
+      title: '最近会话',
+      created_at: '2026-06-11T00:00:00',
+      updated_at: '2026-06-11T00:10:00',
+      message_count: 3,
+    },
+  ])
+  assert.deepEqual(store.conversations, conversations)
+})
+
+test('loadConversation maps stored messages into chat message shape', async () => {
+  const conversationApi = {
+    async getMessages(conversationId) {
+      assert.equal(conversationId, 'conv_1')
+      return [
+        {
+          id: 'msg_user',
+          role: 'user',
+          content: '年假几天？',
+          sources: null,
+          created_at: '2026-06-10T00:01:00',
+        },
+        {
+          id: 'msg_assistant',
+          role: 'assistant',
+          content: '满一年五天[1]。',
+          sources: {
+            sources: [
+              {
+                id: 'chunk_1',
+                document_name: 'handbook.md',
+                text: '年假是 5 天',
+              },
+            ],
+            invalid_references: [3],
+          },
+          created_at: '2026-06-10T00:02:00',
+        },
+      ]
+    },
+  }
+  const store = createStore(async () => {}, conversationApi)
+
+  await store.loadConversation('conv_1')
+
+  assert.equal(store.conversationId, 'conv_1')
+  assert.deepEqual(store.messages, [
+    {
+      id: 'msg_user',
+      role: 'user',
+      content: '年假几天？',
+    },
+    {
+      id: 'msg_assistant',
+      role: 'assistant',
+      content: '满一年五天[1]。',
+      sources: [
+        {
+          id: 'chunk_1',
+          document_name: 'handbook.md',
+          text: '年假是 5 天',
+        },
+      ],
+      status: 'done',
+    },
+  ])
+})
+
+test('removeConversation deletes, refreshes the remembered conversation list, and resets current conversation', async () => {
+  const conversationApi = {
+    calls: [],
+    listResponse: [{ id: 'conv_other', title: '其他会话', message_count: 1 }],
+    async list(kbId) {
+      conversationApi.calls.push(['list', kbId])
+      return conversationApi.listResponse
+    },
+    async remove(conversationId) {
+      conversationApi.calls.push(['remove', conversationId])
+    },
+  }
+  const store = createStore(async () => {}, conversationApi)
+  store.messages = [{ id: 'msg_1', role: 'user', content: '问题' }]
+  store.conversationId = 'conv_1'
+
+  await store.loadConversations('kb_1')
+  await store.removeConversation('conv_1')
+
+  assert.deepEqual(conversationApi.calls, [
+    ['list', 'kb_1'],
+    ['remove', 'conv_1'],
+    ['list', 'kb_1'],
+  ])
+  assert.deepEqual(store.conversations, [
+    { id: 'conv_other', title: '其他会话', message_count: 1 },
+  ])
+  assert.deepEqual(store.messages, [])
+  assert.equal(store.conversationId, '')
 })

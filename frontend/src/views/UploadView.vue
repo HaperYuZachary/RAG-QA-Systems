@@ -19,9 +19,9 @@ const {
 const uploadResults = shallowRef([])
 const uploadError = shallowRef('')
 
-const hasActiveKnowledgeBase = computed(() => Boolean(activeKbId.value))
+const hasActiveKnowledgeBase = computed(() => Boolean(activeKb.value))
 const activeKnowledgeBaseLabel = computed(
-  () => activeKb.value?.name ?? activeKbId.value,
+  () => activeKb.value?.name ?? '未选择知识库',
 )
 
 onMounted(async () => {
@@ -32,18 +32,22 @@ onMounted(async () => {
       await kbStore.fetchAll()
     }
 
-    if (activeKbId.value && activeKbId.value === initialActiveKbId) {
+    if (activeKb.value && activeKbId.value === initialActiveKbId) {
       await fetchDocumentsByKb(activeKbId.value)
     }
   } catch (error) {
     uploadError.value = formatError(error)
-    ElMessage.error(uploadError.value)
   }
 })
 
 watch(activeKbId, async (newId) => {
   uploadError.value = ''
   uploadResults.value = []
+
+  if (!activeKb.value) {
+    await fetchDocumentsByKb('')
+    return
+  }
 
   try {
     await fetchDocumentsByKb(newId)
@@ -124,6 +128,10 @@ function formatError(error) {
 
   if (error.data?.detail) {
     return error.data.detail
+  }
+
+  if (error.response?.status) {
+    return `请求失败（${error.response.status}），请确认后端服务是否正常运行`
   }
 
   return error.message ?? '上传失败，请稍后重试'
@@ -229,7 +237,7 @@ function formatError(error) {
 
 .upload-page__kicker {
   margin: 0 0 6px;
-  color: #0f766e;
+  color: var(--primary);
   font-size: 13px;
   font-weight: 700;
 }
@@ -237,7 +245,7 @@ function formatError(error) {
 .upload-page h2,
 .upload-results h3 {
   margin: 0;
-  color: #111827;
+  color: var(--text);
   letter-spacing: 0;
 }
 
@@ -247,9 +255,10 @@ function formatError(error) {
 
 .upload-results {
   padding: 20px;
-  border: 1px solid #dbe4ef;
-  border-radius: 8px;
-  background: rgba(255, 255, 255, 0.84);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  background: var(--surface);
+  box-shadow: var(--panel-shadow);
 }
 
 .upload-results__header {
@@ -265,13 +274,13 @@ function formatError(error) {
 }
 
 .upload-results__header span {
-  color: #64748b;
+  color: var(--muted);
   font-size: 13px;
-  font-weight: 700;
+  font-weight: 600;
 }
 
 .upload-results__error {
-  color: #b42318;
+  color: var(--danger);
 }
 
 .upload-results__filename {

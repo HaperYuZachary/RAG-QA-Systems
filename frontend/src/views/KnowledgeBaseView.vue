@@ -18,7 +18,7 @@ const submitting = shallowRef(false)
 const errorMessage = computed(() => formatError(error.value))
 
 onMounted(() => {
-  refresh()
+  refresh({ notify: false })
 })
 
 function openCreateDialog() {
@@ -53,11 +53,13 @@ async function handleSubmit(payload) {
   }
 }
 
-async function refresh() {
+async function refresh({ notify = true } = {}) {
   try {
     await kbStore.fetchAll()
   } catch (fetchError) {
-    ElMessage.error(formatError(fetchError))
+    if (notify) {
+      ElMessage.error(formatError(fetchError))
+    }
   }
 }
 
@@ -81,6 +83,10 @@ function formatError(value) {
 
   if (value.data?.detail) {
     return value.data.detail
+  }
+
+  if (value.response?.status) {
+    return `请求失败（${value.response.status}），请确认后端服务是否正常运行`
   }
 
   return value.message ?? '请求失败，请稍后重试'
@@ -183,15 +189,16 @@ function formatError(value) {
 
 .kb-page__kicker {
   margin: 0 0 6px;
-  color: #0f766e;
+  color: var(--primary);
   font-size: 13px;
   font-weight: 700;
 }
 
 .kb-page h2 {
   margin: 0;
-  color: #111827;
+  color: var(--text);
   font-size: 24px;
+  font-weight: 700;
   letter-spacing: 0;
 }
 
@@ -203,7 +210,7 @@ function formatError(value) {
 }
 
 .kb-page__alert {
-  border-radius: 8px;
+  border-radius: var(--radius-md);
 }
 
 .kb-page__grid {
@@ -214,17 +221,19 @@ function formatError(value) {
 
 .kb-page__empty {
   min-height: 360px;
-  border: 1px solid #dbe4ef;
-  border-radius: 8px;
-  background: rgba(255, 255, 255, 0.76);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  background: var(--surface);
+  box-shadow: var(--panel-shadow);
 }
 
 .kb-card--skeleton {
   min-height: 220px;
   padding: 20px;
-  border: 1px solid #dbe4ef;
-  border-radius: 8px;
-  background: rgba(255, 255, 255, 0.84);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  background: var(--surface);
+  box-shadow: var(--panel-shadow);
 }
 
 .kb-card__skeleton-title {
