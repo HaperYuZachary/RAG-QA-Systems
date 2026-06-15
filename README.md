@@ -3,10 +3,6 @@
 > An end-to-end Retrieval-Augmented Generation (RAG) knowledge-base Q&A system: upload documents, ask questions in natural language, and get **streaming answers with verifiable citations**.
 >
 > 一套端到端的 RAG 知识库问答系统:上传文档 → 自然语言提问 → 得到**带可溯源引用的流式回答**。检索链路覆盖语义分块、向量 + BM25 混合召回、RRF 融合、交叉编码器精排与引用幻觉校验。
-
-<!-- 把录好的 Demo GIF 放这里 / Put your demo GIF here -->
-<!-- ![demo](docs/demo.gif) -->
-
 ---
 
 ## ✨ Highlights / 核心亮点
